@@ -1,11 +1,11 @@
-import Groq from "groq-sdk";
+import OpenAI from "openai";
 
-const groq = new Groq({apiKey: process.env.GROQ_API_KEY});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function getEmbedding(text: string): Promise<number[]> {
-    const response = await groq.embeddings.create({
-        model: "nomic-embed-text-v1_5",
-        input: text,
-    });
-    return response.data[0].embedding as number[];
-};
+  const response = await openai.embeddings.create({
+    model: "text-embedding-3-small",
+    input: text,
+  });
+  return response.data[0].embedding;
+}

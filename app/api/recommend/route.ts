@@ -52,7 +52,6 @@ export async function POST(req: NextRequest) {
                   `${i + 1}. ${p.name} (${p.type}) — ${p.description} — ${p.price}₮`
                 ).join("\n")}
 
-
                 Хамгийн тохиромжтой 3-ийг сонгоод тайлбарла.
                 `,
             },

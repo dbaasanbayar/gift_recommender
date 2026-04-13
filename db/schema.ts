@@ -11,7 +11,7 @@ export const providers = pgTable("providers", {
   interests:   text("interests").array().notNull(),
   skills:      text("skills").array().notNull(),
   imageUrl:    text("image_url"),
-  embedding:   vector("embedding", {dimensions: 768}), 
+  embedding:   vector("embedding", {dimensions: 1536}), 
   createdAt:   timestamp("created_at").defaultNow(),
 });
 
