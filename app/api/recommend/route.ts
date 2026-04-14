@@ -9,7 +9,8 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function POST(req: NextRequest) {
   const { age, interests, skills } = await req.json();
-  
+  console.log("4. API хүлээн авлаа:", { age, interests, skills });
+
   // 1. Query embedding авна
   const queryText = `
     ${age} настай хүүхэд.
@@ -17,6 +18,7 @@ export async function POST(req: NextRequest) {
     Хөгжүүлэх чадвар: ${skills.join(", ")}.
   `;
   const queryEmbedding = await getEmbedding(queryText);
+  console.log("5. Embedding үүслээ, dimension:", queryEmbedding.length);
 
   // 2. Vector search + нас filter
   const similar = await db
@@ -29,6 +31,8 @@ export async function POST(req: NextRequest) {
       sql`embedding <=> ${JSON.stringify(queryEmbedding)}::vector`
     )
     .limit(3);
+    console.log("6. DB-с олдсон:", similar.length, "бүтээгдэхүүн");
+    console.log("7. Бүтээгдэхүүнүүд:", similar.map(p => p.name));
 
   // 3. Groq тайлбар
   const chat = await groq.chat.completions.create({
@@ -55,6 +59,7 @@ export async function POST(req: NextRequest) {
       },
     ],
   });
+  console.log("8. Groq хариу:", chat.choices[0].message.content);
 
   return NextResponse.json({
     recommendations: similar,

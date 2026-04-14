@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
+    console.log("A. Provider product body:", body);
     const { clerkId, name, type, description, price, ageMin, ageMax, interests, skills } = body;
 
     let provider = await db
@@ -29,18 +30,22 @@ export async function POST(req: NextRequest) {
         Skills: ${skills.join(", ")}.  
         `;
     
-    const embedding = getEmbedding(embeddingText);
+    const embedding = await getEmbedding(embeddingText);
+    console.log("B. Embedding үүслээ");
 
     // Бүтээгдэхүүн нэмнэ
-    await db.insert(products).values({
+    const result = await db.insert(products).values({
         providerId: provider.id,
-    name, type, description,
-    price: Number(price),
-    ageMin: parseInt(ageMin),
-    ageMax: parseInt(ageMax),
-    interests, skills,
-    approved: 0,
-    });
+        name, type, description,
+        price: Number(price),
+        ageMin: parseInt(ageMin),
+        ageMax: parseInt(ageMax),
+        interests, skills,
+        embedding,
+        approved: 0,
+      }).returning();
+      
+      console.log("C. DB-д орлоо:", result[0].id);
 
     return NextResponse.json({success: true});
 }

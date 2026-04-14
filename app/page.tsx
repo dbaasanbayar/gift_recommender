@@ -50,6 +50,7 @@ export default function Home() {
 
   const handleSubmit = async () => {
     setError("");
+    console.log("1. Submit дарагдлаа", {age, interests, skills});
     if (!interests.length) return setError("Дор хаяж нэг сонирхол сонгоно уу.");
     if (!skills.length) return setError("Дор хаяж нэг чадвар сонгоно уу.");
     setLoading(true);
@@ -60,7 +61,11 @@ export default function Home() {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({age, interests, skills}),
       });
+      console.log("2. Response status:", res.status);
+
       const data = await res.json();
+      console.log("3. Response data:", data);
+
       setResults(data.recommendations);
       setExplanation(data.explanation);
     } catch {
