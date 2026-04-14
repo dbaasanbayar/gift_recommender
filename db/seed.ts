@@ -1,6 +1,6 @@
-import { db } from "@/db";
-import { providers } from "@/db/schema";
-import { getEmbedding } from "@/lib/embeddings";
+// import { db } from "@/db";
+// import { products } from "@/db/schema";
+// import { getEmbedding } from "@/lib/embeddings";
 
 const data = [
   {
@@ -105,25 +105,25 @@ const data = [
   },
 ]
 
-async function main() {
-    console.log("Seed started...");
+// async function main() {
+//     console.log("Seed started...");
 
-    await db.delete(providers);
+//     await db.delete(products);
 
-    for (const item of data) {
-      const embeddingText = `
-        ${item.name}. ${item.description}. 
-        Interests: ${item.interests.join(", ")}. 
-        Skills: ${item.skills.join(", ")}.
-      `;
-      const embedding = await getEmbedding(embeddingText);
+//     for (const item of data) {
+//       const embeddingText = `
+//         ${item.name}. ${item.description}. 
+//         Interests: ${item.interests.join(", ")}. 
+//         Skills: ${item.skills.join(", ")}.
+//       `;
+//       const embedding = await getEmbedding(embeddingText);
 
-      await db.insert(providers).values({...item, embedding});
-      console.log(`${item.name}`);
-    }
+//       await db.insert(products).values({...item, embedding});
+//       console.log(`${item.name}`);
+//     }
     
-    console.log("All finished");
-    process.exit(0);
-};
+//     console.log("All finished");
+//     process.exit(0);
+// };
 
-main().catch(console.error);
+// main().catch(console.error);

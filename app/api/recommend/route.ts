@@ -9,7 +9,7 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function POST(req: NextRequest) {
   const { age, interests, skills } = await req.json();
-
+  
   // 1. Query embedding авна
   const queryText = `
     ${age} настай хүүхэд.

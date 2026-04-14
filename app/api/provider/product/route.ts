@@ -1,8 +1,8 @@
 import { db } from "@/db";
 import { products, providerUsers } from "@/db/schema";
+import { getEmbedding } from "@/lib/embeddings";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
@@ -21,6 +21,15 @@ export async function POST(req: NextRequest) {
             .returning();
         provider = inserted[0];
     }
+
+    // Embedding автоматаар үүсгэнэ ← нэмэх
+    const embeddingText = `
+        ${name}. ${description}.
+        Interests: ${interests.join(", ")}.
+        Skills: ${skills.join(", ")}.  
+        `;
+    
+    const embedding = getEmbedding(embeddingText);
 
     // Бүтээгдэхүүн нэмнэ
     await db.insert(products).values({
