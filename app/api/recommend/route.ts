@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     .orderBy(
       sql`embedding <=> ${JSON.stringify(queryEmbedding)}::vector`
     )
-    .limit(5);
+    .limit(3);
 
   // 3. Groq тайлбар
   const chat = await groq.chat.completions.create({

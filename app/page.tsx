@@ -69,7 +69,6 @@ export default function Home() {
       setLoading(false);
     }
   };
-  console.log(handleSubmit, "darah")
   const handleReset = () => {
     setResults(null);
     setInterests([]);
