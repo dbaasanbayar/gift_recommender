@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { providers } from "@/db/schema";
+import { products } from "@/db/schema";
 import { getEmbedding } from "@/lib/embeddings";
 import { sql } from "drizzle-orm";
 import Groq from "groq-sdk";
@@ -21,9 +21,9 @@ export async function POST(req: NextRequest) {
   // 2. Vector search + нас filter
   const similar = await db
     .select()
-    .from(providers)
+    .from(products)
     .where(
-      sql`${providers.ageMin} <= ${age} AND ${providers.ageMax} >= ${age}`
+      sql`${products.ageMin} <= ${age} AND ${products.ageMax} >= ${age}`
     )
     .orderBy(
       sql`embedding <=> ${JSON.stringify(queryEmbedding)}::vector`
