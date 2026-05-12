@@ -1,3 +1,4 @@
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { products, providerUsers } from "@/db/schema";
 import { getEmbedding } from "@/lib/embeddings";
@@ -5,47 +6,51 @@ import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-    const body = await req.json();
-    console.log("A. Provider product body:", body);
-    const { clerkId, name, type, description, price, ageMin, ageMax, interests, skills } = body;
+  const { userId } = await auth();
 
-    let provider = await db
-        .select()
-        .from(providerUsers)
-        .where(eq(providerUsers.clerkId, clerkId))
-        .then(r => r[0]);
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-    if (!provider) {
-        const inserted = await db
-            .insert(providerUsers)
-            .values({clerkId, name: "Provider", email: "" })
-            .returning();
-        provider = inserted[0];
-    }
+  const { name, type, description, price, ageMin, ageMax, interests, skills } = await req.json();
 
-    // Embedding автоматаар үүсгэнэ ← нэмэх
-    const embeddingText = `
-        ${name}. ${description}.
-        Interests: ${interests.join(", ")}.
-        Skills: ${skills.join(", ")}.  
-        `;
-    
-    const embedding = await getEmbedding(embeddingText);
-    console.log("B. Embedding үүслээ");
+  let provider = await db
+    .select()
+    .from(providerUsers)
+    .where(eq(providerUsers.clerkId, userId))
+    .then((r) => r[0]);
+  
+  if (!provider) {
+    const user = await currentUser();
+    const inserted = await db
+      .insert(providerUsers)
+      .values({
+        clerkId: userId,
+        name: user?.fullName ?? "Provider",
+        email: user?.emailAddresses[0]?.emailAddress ?? "",
+      })
+      .returning();
+    provider = inserted[0];
+  }
 
-    // Бүтээгдэхүүн нэмнэ
-    const result = await db.insert(products).values({
-        providerId: provider.id,
-        name, type, description,
-        price: Number(price),
-        ageMin: parseInt(ageMin),
-        ageMax: parseInt(ageMax),
-        interests, skills,
-        embedding,
-        approved: 0,
-      }).returning();
-      
-      console.log("C. DB-д орлоо:", result[0].id);
+  const embeddingText = `
+    ${name}. ${description}.
+    Interests: ${interests.join(", ")}.
+    Skills: ${skills.join(", ")}.
+  `;
 
-    return NextResponse.json({success: true});
+  const embedding = await getEmbedding(embeddingText);
+
+  await db.insert(products).values({
+    providerId: provider.id,
+    name, type, description,
+    price: Number(price),
+    ageMin: parseInt(ageMin),
+    ageMax: parseInt(ageMax),
+    interests, skills,
+    embedding,
+    approved: 0,
+  });
+
+  return NextResponse.json({ success: true });
 }

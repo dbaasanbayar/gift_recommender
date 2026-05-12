@@ -12,8 +12,7 @@ const SKILL_OPTIONS = [
   "patience", "logic", "teamwork", "discipline", "expression"
 ];
 
-export default function ProviderDashboard({clerkId, userName}: {
-    clerkId: string;
+export default function ProviderDashboard({ userName }: {
     userName: string;})
 {
     const [form, setForm] = useState({
@@ -55,7 +54,7 @@ export default function ProviderDashboard({clerkId, userName}: {
             const res = await fetch("/api/provider/product", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({...form, clerkId, price: parseInt(form.price)}),
+                body: JSON.stringify({...form, price: parseInt(form.price)}),
             });
             if (!res.ok) throw new Error();
             setSuccess(true);
@@ -74,46 +73,46 @@ export default function ProviderDashboard({clerkId, userName}: {
 
 
     return (
-        <main className="min-h-screen bg-[#F5F0E8] py-12 px-4">
+        <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <span className="text-xs uppercase tracking-widest text-[#C4622D] border border-[#C4622D] px-3 py-1 rounded-full">
+          <span className="text-xs uppercase tracking-widest text-[#7C5CBF] border border-[#7C5CBF] px-3 py-1 rounded-full">
             Provider Dashboard
           </span>
           <h1 className="text-4xl font-light mt-4" style={{ fontFamily: "Georgia, serif" }}>
-            Сайн байна уу, <em className="text-[#C4622D]">{userName}</em>
+            Сайн байна уу, <em className="text-[#7C5CBF]">{userName}</em>
           </h1>
         </div>
 
         {success && (
-          <div className="bg-[#E8F0DE] border border-[#7B9E6B] rounded-xl p-4 mb-6 text-[#3B6D11] text-sm">
+          <div className="bg-[#EDE5F8] border border-[#9B7FCC] rounded-xl p-4 mb-6 text-[#5B3D8F] text-sm">
             ✅ Бүтээгдэхүүн амжилттай нэмэгдлээ. Админ хянасны дараа харагдана.
           </div>
         )}
 
-        <div className="bg-[#FDFAF5] border border-[#E8DDD0] rounded-3xl p-8 shadow-sm">
+        <div className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-3xl p-8 shadow-sm">
           <h2 className="text-xl font-light mb-6" style={{ fontFamily: "Georgia, serif" }}>
             Шинэ бүтээгдэхүүн нэмэх
           </h2>
 
           {/* Нэр */}
           <div className="mb-4">
-            <label className="text-xs uppercase tracking-wider text-[#8A7A70] block mb-2">Нэр</label>
+            <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">Нэр</label>
             <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-[#E8DDD0] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#C4622D]"
+              className="w-full border border-[#E4DDF4] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#7C5CBF]"
               placeholder="Бүтээгдэхүүний нэр" />
           </div>
 
           {/* Төрөл */}
           <div className="mb-4">
-            <label className="text-xs uppercase tracking-wider text-[#8A7A70] block mb-2">Төрөл</label>
+            <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">Төрөл</label>
             <div className="flex gap-3">
               {["physical", "course", "experience"].map(t => (
                 <button key={t} onClick={() => setForm({ ...form, type: t })}
                   className={`px-4 py-2 rounded-full border text-sm transition-all ${
                     form.type === t
-                      ? "bg-[#C4622D] border-[#C4622D] text-white"
-                      : "border-[#E8DDD0] text-[#8A7A70]"
+                      ? "bg-[#7C5CBF] border-[#7C5CBF] text-white"
+                      : "border-[#E4DDF4] text-[#9B8EAA]"
                   }`}>
                   {t === "physical" ? "🎁 Бэлэг" : t === "course" ? "📖 Курс" : "⭐ Туршлага"}
                 </button>
@@ -123,42 +122,42 @@ export default function ProviderDashboard({clerkId, userName}: {
 
           {/* Тайлбар */}
           <div className="mb-4">
-            <label className="text-xs uppercase tracking-wider text-[#8A7A70] block mb-2">Тайлбар</label>
+            <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">Тайлбар</label>
             <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })}
-              className="w-full border border-[#E8DDD0] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#C4622D] h-24 resize-none"
+              className="w-full border border-[#E4DDF4] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#7C5CBF] h-24 resize-none"
               placeholder="Бүтээгдэхүүний тайлбар" />
           </div>
 
           {/* Үнэ + Нас */}
           <div className="grid grid-cols-3 gap-3 mb-4">
             <div>
-              <label className="text-xs uppercase tracking-wider text-[#8A7A70] block mb-2">Үнэ (₮)</label>
+              <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">Үнэ (₮)</label>
               <input type="number" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })}
-                className="w-full border border-[#E8DDD0] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#C4622D]"
+                className="w-full border border-[#E4DDF4] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#7C5CBF]"
                 placeholder="50000" />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-wider text-[#8A7A70] block mb-2">Нас (мин)</label>
+              <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">Нас (мин)</label>
               <input type="number" value={form.ageMin} onChange={e => setForm({ ...form, ageMin: e.target.value })}
-                className="w-full border border-[#E8DDD0] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#C4622D]" />
+                className="w-full border border-[#E4DDF4] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#7C5CBF]" />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-wider text-[#8A7A70] block mb-2">Нас (макс)</label>
+              <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">Нас (макс)</label>
               <input type="number" value={form.ageMax} onChange={e => setForm({ ...form, ageMax: e.target.value })}
-                className="w-full border border-[#E8DDD0] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#C4622D]" />
+                className="w-full border border-[#E4DDF4] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#7C5CBF]" />
             </div>
           </div>
 
           {/* Сонирхол */}
           <div className="mb-4">
-            <label className="text-xs uppercase tracking-wider text-[#8A7A70] block mb-2">Сонирхол</label>
+            <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">Сонирхол</label>
             <div className="flex flex-wrap gap-2">
               {INTEREST_OPTIONS.map(val => (
                 <button key={val} onClick={() => toggleItem(val, form.interests, "interests")}
                   className={`px-3 py-1.5 rounded-full border text-xs transition-all ${
                     form.interests.includes(val)
-                      ? "bg-[#C4622D] border-[#C4622D] text-white"
-                      : "border-[#E8DDD0] text-[#8A7A70]"
+                      ? "bg-[#7C5CBF] border-[#7C5CBF] text-white"
+                      : "border-[#E4DDF4] text-[#9B8EAA]"
                   }`}>
                   {val}
                 </button>
@@ -168,14 +167,14 @@ export default function ProviderDashboard({clerkId, userName}: {
 
           {/* Чадвар */}
           <div className="mb-6">
-            <label className="text-xs uppercase tracking-wider text-[#8A7A70] block mb-2">Чадвар</label>
+            <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">Чадвар</label>
             <div className="flex flex-wrap gap-2">
               {SKILL_OPTIONS.map(val => (
                 <button key={val} onClick={() => toggleItem(val, form.skills, "skills")}
                   className={`px-3 py-1.5 rounded-full border text-xs transition-all ${
                     form.skills.includes(val)
-                      ? "bg-[#7B9E6B] border-[#7B9E6B] text-white"
-                      : "border-[#E8DDD0] text-[#8A7A70]"
+                      ? "bg-[#9B7FCC] border-[#9B7FCC] text-white"
+                      : "border-[#E4DDF4] text-[#9B8EAA]"
                   }`}>
                   {val}
                 </button>
@@ -184,13 +183,13 @@ export default function ProviderDashboard({clerkId, userName}: {
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-[#FEF0EE] border border-[#F5C4B3] rounded-xl text-sm text-[#993C1D]">
+            <div className="mb-4 p-3 bg-[#F0ECFF] border border-[#D4C5F0] rounded-xl text-sm text-[#5B3D8F]">
               {error}
             </div>
           )}
 
           <button onClick={handleSubmit} disabled={loading}
-            className="w-full py-4 bg-[#3D2B1F] text-[#F5F0E8] rounded-xl text-lg italic hover:bg-[#C4622D] transition-all disabled:opacity-50"
+            className="w-full py-4 bg-[#7C5CBF] text-white rounded-xl text-lg font-semibold hover:bg-[#6B4AAF] transition-all disabled:opacity-50 shadow-sm tracking-wide"
             style={{ fontFamily: "Georgia, serif" }}>
             {loading ? "Нэмж байна..." : "Бүтээгдэхүүн нэмэх →"}
           </button>

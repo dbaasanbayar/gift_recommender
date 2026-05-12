@@ -24,22 +24,32 @@ const SKILLS = [
   { val: "expression", label: "🗣️ Илэрхийлэл" },
 ];
 
-type Provider = {
-  id: string,
-  name: string,
-  type: string,
-  description: string,
-  price: number,
-  interests: string[],
-  skills: string[],
+type ProviderProduct = {
+  id: string;
+  name: string;
+  type: string;
+  description: string;
+  price: number;
 };
+
+type GoogleProduct = {
+  title: string;
+  price: string;
+  source: string;
+  link: string;
+  thumbnail: string;
+};
+
+const typeIcon: Record<string, string> = { physical: "🎁", course: "📖", experience: "⭐" };
+const typeLabel: Record<string, string> = { physical: "Бэлэг", course: "Курс", experience: "Туршлага" };
 
 export default function Home() {
   const [age, setAge] = useState(8);
   const [interests, setInterests] = useState<string[]>([]);
   const [skills, setSkills] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<Provider[] | null>(null);
+  const [providerProducts, setProviderProducts] = useState<ProviderProduct[] | null>(null);
+  const [googleProducts, setGoogleProducts] = useState<GoogleProduct[] | null>(null);
   const [explanation, setExplanation] = useState("");
   const [error, setError] = useState("");
 
@@ -50,7 +60,6 @@ export default function Home() {
 
   const handleSubmit = async () => {
     setError("");
-    console.log("1. Submit дарагдлаа", {age, interests, skills});
     if (!interests.length) return setError("Дор хаяж нэг сонирхол сонгоно уу.");
     if (!skills.length) return setError("Дор хаяж нэг чадвар сонгоно уу.");
     setLoading(true);
@@ -58,71 +67,115 @@ export default function Home() {
     try {
       const res = await fetch("/api/recommend", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({age, interests, skills}),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ age, interests, skills }),
       });
-      console.log("2. Response status:", res.status);
-
       const data = await res.json();
-      console.log("3. Response data:", data);
-
-      setResults(data.recommendations);
+      setProviderProducts(data.providerProducts);
+      setGoogleProducts(data.googleProducts);
       setExplanation(data.explanation);
     } catch {
-      setError("Алдаа гарлаа. Дахин оролдоно уу.")
+      setError("Алдаа гарлаа. Дахин оролдоно уу.");
     } finally {
       setLoading(false);
     }
   };
+
   const handleReset = () => {
-    setResults(null);
+    setProviderProducts(null);
+    setGoogleProducts(null);
+    setExplanation("");
     setInterests([]);
     setSkills([]);
     setError("");
   };
 
-  const typeIcon: Record<string, string> = { physical: "🎁", course: "📖", experience: "⭐" };
-  const typeLabel: Record<string, string> = { physical: "Бэлэг", course: "Курс", experience: "Туршлага" };
- 
   if (loading) return (
-    <main className="min-h-screen flex items-center justify-center bg-[#F5F0E8]">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="text-center">
         <div className="flex gap-2 justify-center mb-4">
-        {[0,1,2].map(i => (
-            <div key={i} className="w-2 h-2 rounded-full bg-[#C4622D] animate-bounce"
+          {[0, 1, 2].map(i => (
+            <div key={i} className="w-2 h-2 rounded-full bg-[#7C5CBF] animate-bounce"
               style={{ animationDelay: `${i * 0.2}s` }} />
           ))}
         </div>
-        <p className="text-[#8A7A70] italic">Хамгийн тохиромжтой бэлгийг хайж байна...</p>
+        <p className="text-[#9B8EAA] italic">Хамгийн тохиромжтой бэлгийг хайж байна...</p>
       </div>
     </main>
   );
 
-  if (results) return (
-    <main className="min-h-screen bg-[#F5F0E8] py-12 px-4">
+  if (providerProducts) return (
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
-       <h2 className="text-3xl font-light mb-4" style={{ fontFamily: 'Georgia, serif' }}>
+        <h2 className="text-3xl font-light mb-4" style={{ fontFamily: "Georgia, serif" }}>
           Санал болгох бэлгүүд
         </h2>
-        <div className="bg-[#FFF8F0] border-l-4 border-[#C4622D] p-4 rounded-r-xl mb-6 text-sm leading-relaxed text-[#3D2B1F]">
+
+        {/* AI тайлбар */}
+        <div className="bg-[#F5F0FF] border-l-4 border-[#7C5CBF] p-4 rounded-r-xl mb-8 text-sm leading-relaxed text-[#2D1F45]">
           {explanation}
         </div>
-        {results.map((p, i) => (
-          <div key={p.id} className="bg-[#FDFAF5] border border-[#E8DDD0] rounded-2xl p-6 mb-3 flex gap-4 hover:border-[#C4622D] transition-all">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-[#FDE8D8] shrink-0">
-              {typeIcon[p.type]}
+
+        {/* Монгол providers */}
+        {providerProducts.length > 0 && (
+          <section className="mb-8">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xs uppercase tracking-wider text-[#9B8EAA]">🏪 Монгол бэлгүүд</span>
             </div>
-            <div className="flex-1">
-              <div className="text-xs uppercase tracking-wider text-[#8A7A70] mb-1">{typeLabel[p.type]}</div>
-              <div className="text-lg font-medium text-[#3D2B1F] mb-1" style={{ fontFamily: 'Georgia, serif' }}>{p.name}</div>
-              <div className="text-sm text-[#8A7A70]">{p.description}</div>
+            <div className="space-y-3">
+              {providerProducts.map((p) => (
+                <div key={p.id} className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-2xl p-5 flex gap-4 hover:border-[#7C5CBF] transition-all">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-[#EDE5F8] shrink-0">
+                    {typeIcon[p.type]}
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-1">{typeLabel[p.type]}</div>
+                    <div className="text-lg font-medium text-[#2D1F45]" style={{ fontFamily: "Georgia, serif" }}>{p.name}</div>
+                    <div className="text-sm text-[#9B8EAA]">{p.description}</div>
+                  </div>
+                  <div className="text-xl text-[#7C5CBF] font-light whitespace-nowrap" style={{ fontFamily: "Georgia, serif" }}>
+                    {p.price.toLocaleString()}₮
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="text-xl text-[#C4622D] font-light whitespace-nowrap" style={{ fontFamily: 'Georgia, serif' }}>
-            {p.price.toLocaleString()}₮
+          </section>
+        )}
+
+        {/* Google Shopping */}
+        {googleProducts && googleProducts.length > 0 && (
+          <section className="mb-8">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xs uppercase tracking-wider text-[#9B8EAA]">🛒 Олон улсын бэлгүүд</span>
             </div>
-          </div>
-        ))}
-        <button onClick={handleReset} className="block mx-auto mt-6 px-6 py-2 rounded-full border border-[#E8DDD0] text-[#8A7A70] hover:border-[#3D2B1F] hover:text-[#3D2B1F] transition-all text-sm">
+            <div className="space-y-3">
+              {googleProducts.slice(0, 5).map((p, i) => (
+                <div key={i} className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-2xl p-5 flex gap-4 hover:border-[#9B7FCC] transition-all">
+                  <div className="w-12 h-12 rounded-xl shrink-0 bg-[#EDE5F8] overflow-hidden flex items-center justify-center text-xl">
+                    {p.thumbnail
+                      ? <img src={p.thumbnail} alt={p.title} className="w-full h-full object-cover" />
+                      : "🛒"}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-1">{p.source}</div>
+                    <div className="text-base font-medium text-[#2D1F45] line-clamp-2" style={{ fontFamily: "Georgia, serif" }}>{p.title}</div>
+                    <div className="text-lg text-[#9B7FCC] font-light mt-1" style={{ fontFamily: "Georgia, serif" }}>{p.price}</div>
+                  </div>
+                  {p.link && (
+                    <a href={p.link} target="_blank" rel="noopener noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      className="shrink-0 self-center px-4 py-2 rounded-full border-2 border-[#9B7FCC] text-[#9B7FCC] text-xs font-semibold hover:bg-[#9B7FCC] hover:text-white transition-all">
+                      Үзэх →
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <button onClick={handleReset}
+          className="block mx-auto mt-4 px-6 py-2 rounded-full border-2 border-[#C9B8E8] text-[#7C5CBF] font-medium hover:border-[#7C5CBF] hover:bg-[#EDE5F8] transition-all text-sm">
           ← Дахин хайх
         </button>
       </div>
@@ -130,64 +183,61 @@ export default function Home() {
   );
 
   return (
-    <main className="min-h-screen bg-[#F5F0E8] py-12 px-4">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="mb-10">
-          <span className="text-xs uppercase tracking-widest text-[#C4622D] border border-[#C4622D] px-3 py-1 rounded-full">
+          <span className="text-xs uppercase tracking-widest text-[#7C5CBF] border border-[#7C5CBF] px-3 py-1 rounded-full">
             Хүүхдийн бэлэг зөвлөгч
           </span>
-          <h1 className="text-5xl font-light mt-4 mb-3 leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
-            Утга бүхий <em className="text-[#C4622D]">бэлэг олъё</em>
+          <h1 className="text-5xl font-light mt-4 mb-3 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
+            Утга бүхий <em className="text-[#7C5CBF]">бэлэг олъё</em>
           </h1>
-          <p className="text-[#8A7A70] text-sm leading-relaxed">
+          <p className="text-[#9B8EAA] text-sm leading-relaxed">
             Хүүхдийн нас, сонирхол, хөгжүүлэх чадварт тулгуурлан хамгийн тохиромжтой бэлгийг санал болгоно.
           </p>
         </div>
 
-        <div className="bg-[#FDFAF5] border border-[#E8DDD0] rounded-3xl p-8 shadow-sm">
-          {/* Нас */}
-          <div className="text-xs uppercase tracking-wider text-[#8A7A70] mb-3">Хүүхдийн нас</div>
+        <div className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-3xl p-8 shadow-sm">
+          <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">Хүүхдийн нас</div>
           <div className="flex items-center gap-6 mb-8">
-            <span className="text-5xl font-light text-[#3D2B1F]" style={{ fontFamily: 'Georgia, serif' }}>
-              {age} <span className="text-base text-[#8A7A70]">нас</span>
+            <span className="text-5xl font-light text-[#2D1F45]" style={{ fontFamily: "Georgia, serif" }}>
+              {age} <span className="text-base text-[#9B8EAA]">нас</span>
             </span>
             <input type="range" min={3} max={16} value={age}
               onChange={e => setAge(+e.target.value)}
-              className="flex-1 accent-[#C4622D]" />
+              className="flex-1 accent-[#7C5CBF]" />
           </div>
 
-          <hr className="border-[#E8DDD0] mb-6" />
+          <hr className="border-[#E4DDF4] mb-6" />
 
-          {/* Сонирхол */}
-          <div className="text-xs uppercase tracking-wider text-[#8A7A70] mb-3">
-            Сонирхол <span className="text-[#C4622D]">(1-3 сонго)</span>
+          <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">
+            Сонирхол <span className="text-[#7C5CBF]">(1-3 сонго)</span>
           </div>
           <div className="flex flex-wrap gap-2 mb-6">
             {INTERESTS.map(({ val, label }) => (
               <button key={val} onClick={() => toggleChip(val, interests, setInterests)}
-                className={`px-4 py-2 rounded-full border text-sm transition-all ${
+                className={`px-4 py-2 rounded-full border-2 text-sm font-medium transition-all ${
                   interests.includes(val)
-                    ? "bg-[#C4622D] border-[#C4622D] text-white"
-                    : "border-[#E8DDD0] text-[#8A7A70] hover:border-[#C4622D] hover:text-[#C4622D]"
+                    ? "bg-[#7C5CBF] border-[#7C5CBF] text-white shadow-sm"
+                    : "border-[#C9B8E8] text-[#7C5CBF] hover:border-[#7C5CBF] hover:bg-[#EDE5F8]"
                 }`}>
                 {label}
               </button>
             ))}
           </div>
 
-          <hr className="border-[#E8DDD0] mb-6" />
+          <hr className="border-[#E4DDF4] mb-6" />
 
-          {/* Чадвар */}
-          <div className="text-xs uppercase tracking-wider text-[#8A7A70] mb-3">
-            Хөгжүүлэх чадвар <span className="text-[#7B9E6B]">(1-3 сонго)</span>
+          <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">
+            Хөгжүүлэх чадвар <span className="text-[#9B7FCC]">(1-3 сонго)</span>
           </div>
           <div className="flex flex-wrap gap-2 mb-2">
             {SKILLS.map(({ val, label }) => (
               <button key={val} onClick={() => toggleChip(val, skills, setSkills)}
-                className={`px-4 py-2 rounded-full border text-sm transition-all ${
+                className={`px-4 py-2 rounded-full border-2 text-sm font-medium transition-all ${
                   skills.includes(val)
-                    ? "bg-[#7B9E6B] border-[#7B9E6B] text-white"
-                    : "border-[#E8DDD0] text-[#8A7A70] hover:border-[#7B9E6B] hover:text-[#7B9E6B]"
+                    ? "bg-[#9B7FCC] border-[#9B7FCC] text-white shadow-sm"
+                    : "border-[#D4C5F0] text-[#9B7FCC] hover:border-[#9B7FCC] hover:bg-[#F0ECFF]"
                 }`}>
                 {label}
               </button>
@@ -195,17 +245,24 @@ export default function Home() {
           </div>
 
           {error && (
-            <div className="mt-4 p-3 bg-[#FEF0EE] border border-[#F5C4B3] rounded-xl text-sm text-[#993C1D]">
+            <div className="mt-4 p-3 bg-[#F0ECFF] border border-[#D4C5F0] rounded-xl text-sm text-[#5B3D8F]">
               {error}
             </div>
           )}
 
           <button onClick={handleSubmit}
-            className="w-full mt-8 py-4 bg-[#3D2B1F] text-[#F5F0E8] rounded-xl text-lg italic hover:bg-[#C4622D] transition-all hover:-translate-y-0.5 hover:shadow-lg"
-            style={{ fontFamily: 'Georgia, serif' }}>
+            className="w-full mt-8 py-4 bg-[#7C5CBF] text-white rounded-xl text-lg font-semibold hover:bg-[#6B4AAF] transition-all hover:-translate-y-0.5 hover:shadow-lg tracking-wide"
+            style={{ fontFamily: "Georgia, serif" }}>
             Бэлэг хайх →
           </button>
         </div>
+      </div>
+
+      <div className="text-center mt-8">
+        <a href="/provider"
+          className="text-xs text-[#9B8EAA] hover:text-[#7C5CBF] transition-all border-b border-transparent hover:border-[#7C5CBF]">
+          Та бэлэг нийлүүлэгч үү? Энд бүртгүүлнэ үү →
+        </a>
       </div>
     </main>
   );

@@ -36,6 +36,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# claude
+.claude/
+
+# generated binaries
+gifted@0.1.0
+tsx
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

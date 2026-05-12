@@ -1,6 +1,7 @@
-// import { db } from "@/db";
-// import { products } from "@/db/schema";
-// import { getEmbedding } from "@/lib/embeddings";
+import "dotenv/config";
+import { db } from "@/db";
+import { products, providerUsers } from "@/db/schema";
+import { getEmbedding } from "@/lib/embeddings";
 
 const data = [
   {
@@ -103,27 +104,50 @@ const data = [
     interests:   ["art", "building", "creativity"],
     skills:      ["creativity", "patience", "expression"],
   },
-]
+];
 
-// async function main() {
-//     console.log("Seed started...");
+async function main() {
+  console.log("Seed started...");
 
-//     await db.delete(products);
+  // Seed provider үүсгэнэ
+  const existing = await db.select().from(providerUsers).limit(1);
+  let providerId: string;
 
-//     for (const item of data) {
-//       const embeddingText = `
-//         ${item.name}. ${item.description}. 
-//         Interests: ${item.interests.join(", ")}. 
-//         Skills: ${item.skills.join(", ")}.
-//       `;
-//       const embedding = await getEmbedding(embeddingText);
+  if (existing.length > 0) {
+    providerId = existing[0].id;
+  } else {
+    const inserted = await db
+      .insert(providerUsers)
+      .values({
+        clerkId: "seed_provider",
+        name: "Seed Provider",
+        email: "seed@giftrecommender.mn",
+      })
+      .returning();
+    providerId = inserted[0].id;
+  }
 
-//       await db.insert(products).values({...item, embedding});
-//       console.log(`${item.name}`);
-//     }
-    
-//     console.log("All finished");
-//     process.exit(0);
-// };
+  await db.delete(products);
 
-// main().catch(console.error);
+  for (const item of data) {
+    const embeddingText = `
+      ${item.name}. ${item.description}.
+      Interests: ${item.interests.join(", ")}.
+      Skills: ${item.skills.join(", ")}.
+    `;
+    const embedding = await getEmbedding(embeddingText);
+
+    await db.insert(products).values({
+      ...item,
+      providerId,
+      embedding,
+      approved: 1,
+    });
+    console.log(`✓ ${item.name}`);
+  }
+
+  console.log("All finished");
+  process.exit(0);
+}
+
+main().catch(console.error);
