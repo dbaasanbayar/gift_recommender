@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   // Provider RAG + Google Shopping зэрэг хайна
   const [queryEmbedding, googleProducts] = await Promise.all([
     getEmbedding(queryText),
-    searchGoogleShopping(age, interests, skills),
+    searchGoogleShopping(age, interests, skills).catch(() => []),
   ]);
 
   // Vector search — provider бүтээгдэхүүн
