@@ -3,29 +3,27 @@
 import { useState } from "react";
 
 export default function ProviderOnboarding({
-  defaultName,
   defaultEmail,
   onComplete,
 }: {
-  defaultName: string;
   defaultEmail: string;
   onComplete: () => void;
 }) {
   const [form, setForm] = useState({
-    name: defaultName,
+    businessName: "",
     email: defaultEmail,
     phone: "",
+    description: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
     setError("");
-    if (!form.name || !form.email) {
-      setError("Нэр болон имэйл шаардлагатай.");
+    if (!form.businessName || !form.email) {
+      setError("Бизнесийн нэр болон имэйл шаардлагатай.");
       return;
     }
-
     setLoading(true);
     try {
       const res = await fetch("/api/provider/register", {
@@ -53,48 +51,49 @@ export default function ProviderOnboarding({
             Тавтай морил
           </h1>
           <p className="text-[#9B8EAA] text-sm leading-relaxed">
-            Бэлэг нийлүүлэгчээр бүртгүүлэхийн тулд мэдээллээ бөглөнө үү.
+            Бизнесийн мэдээллээ бөглөнө үү. Админ хянасны дараа бүтээгдэхүүн нэмэх боломжтой болно.
           </p>
         </div>
 
         <div className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-3xl p-8 shadow-sm">
-
           <div className="mb-5">
             <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">
               Бизнесийн нэр <span className="text-[#7C5CBF]">*</span>
             </label>
-            <input
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            <input value={form.businessName}
+              onChange={(e) => setForm({ ...form, businessName: e.target.value })}
               className="w-full border border-[#E4DDF4] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#7C5CBF] transition-all"
-              placeholder="Жишээ: Гоёл Бэлэг Дэлгүүр"
-            />
+              placeholder="Жишээ: DGL Music Shop" />
           </div>
 
           <div className="mb-5">
             <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">
               Имэйл <span className="text-[#7C5CBF]">*</span>
             </label>
-            <input
-              type="email"
-              value={form.email}
+            <input type="email" value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               className="w-full border border-[#E4DDF4] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#7C5CBF] transition-all"
-              placeholder="info@example.mn"
-            />
+              placeholder="info@example.mn" />
+          </div>
+
+          <div className="mb-5">
+            <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">
+              Утасны дугаар <span className="text-[#9B8EAA] normal-case">(заавал биш)</span>
+            </label>
+            <input type="tel" value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              className="w-full border border-[#E4DDF4] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#7C5CBF] transition-all"
+              placeholder="9999-9999" />
           </div>
 
           <div className="mb-6">
             <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">
-              Утасны дугаар <span className="text-[#9B8EAA] normal-case">(заавал биш)</span>
+              Бизнесийн тайлбар <span className="text-[#9B8EAA] normal-case">(заавал биш)</span>
             </label>
-            <input
-              type="tel"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              className="w-full border border-[#E4DDF4] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#7C5CBF] transition-all"
-              placeholder="9999-9999"
-            />
+            <textarea value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              className="w-full border border-[#E4DDF4] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#7C5CBF] transition-all h-20 resize-none"
+              placeholder="Бизнесийнхээ тухай товч тайлбарлана уу" />
           </div>
 
           {error && (
@@ -103,12 +102,9 @@ export default function ProviderOnboarding({
             </div>
           )}
 
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
+          <button onClick={handleSubmit} disabled={loading}
             className="w-full py-4 bg-[#7C5CBF] text-white rounded-xl text-lg font-semibold hover:bg-[#6B4AAF] transition-all disabled:opacity-50 shadow-sm tracking-wide"
-            style={{ fontFamily: "Georgia, serif" }}
-          >
+            style={{ fontFamily: "Georgia, serif" }}>
             {loading ? "Бүртгэж байна..." : "Бүртгүүлэх →"}
           </button>
         </div>
