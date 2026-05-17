@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { db } from "@/db";
-import { products, providerUsers } from "@/db/schema";
+import { products, providers, providerMembers } from "@/db/schema";
 import { getEmbedding } from "@/lib/embeddings";
 
 const data = [
@@ -110,21 +110,27 @@ async function main() {
   console.log("Seed started...");
 
   // Seed provider үүсгэнэ
-  const existing = await db.select().from(providerUsers).limit(1);
+  const existing = await db.select().from(providers).limit(1);
   let providerId: string;
 
   if (existing.length > 0) {
     providerId = existing[0].id;
   } else {
     const inserted = await db
-      .insert(providerUsers)
+      .insert(providers)
       .values({
-        clerkId: "seed_provider",
-        name: "Seed Provider",
+        businessName: "Seed Provider",
         email: "seed@giftrecommender.mn",
+        approved: 1,
       })
       .returning();
     providerId = inserted[0].id;
+
+    await db.insert(providerMembers).values({
+      providerId,
+      clerkId: "seed_provider",
+      role: "owner",
+    });
   }
 
   await db.delete(products);
