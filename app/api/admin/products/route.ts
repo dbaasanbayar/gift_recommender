@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { products, providerUsers } from "@/db/schema";
+import { products, providers } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET() {
@@ -24,11 +24,11 @@ export async function GET() {
       skills: products.skills,
       approved: products.approved,
       createdAt: products.createdAt,
-      providerName: providerUsers.name,
-      providerEmail: providerUsers.email,
+      providerName: providers.businessName,
+      providerEmail: providers.email,
     })
     .from(products)
-    .leftJoin(providerUsers, eq(products.providerId, providerUsers.id))
+    .leftJoin(providers, eq(products.providerId, providers.id))
     .orderBy(products.createdAt);
 
   return NextResponse.json({ products: pending });
