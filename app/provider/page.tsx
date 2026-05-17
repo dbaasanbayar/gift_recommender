@@ -38,7 +38,7 @@ export default function ProviderPage() {
   }, []);
 
   if (status === "loading") return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <main className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="flex gap-2">
         {[0, 1, 2].map((i) => (
           <div key={i} className="w-2 h-2 rounded-full bg-[#7C5CBF] animate-bounce"
@@ -56,7 +56,7 @@ export default function ProviderPage() {
   );
 
   if (status === "pending") return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center px-4">
+    <main className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-[#FDFCFF] border border-[#E4DDF4] rounded-3xl p-10 text-center shadow-sm">
         <div className="text-4xl mb-4">🕐</div>
         <h2 className="text-2xl font-light mb-3 text-[#2D1F45]" style={{ fontFamily: "Georgia, serif" }}>

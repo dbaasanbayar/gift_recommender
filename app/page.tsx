@@ -91,7 +91,7 @@ export default function Home() {
   };
 
   if (loading) return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <main className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="text-center">
         <div className="flex gap-2 justify-center mb-4">
           {[0, 1, 2].map(i => (
@@ -105,7 +105,7 @@ export default function Home() {
   );
 
   if (providerProducts) return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
+    <main className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <h2 className="text-3xl font-light mb-4" style={{ fontFamily: "Georgia, serif" }}>
           Санал болгох бэлгүүд
@@ -183,7 +183,7 @@ export default function Home() {
   );
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
+    <main className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="mb-10">
           <span className="text-xs uppercase tracking-widest text-[#7C5CBF] border border-[#7C5CBF] px-3 py-1 rounded-full">
