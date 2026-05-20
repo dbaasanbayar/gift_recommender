@@ -24,7 +24,6 @@ const SKILLS = [
 const GENDERS = [
   { val: "boy", label: "👦 Хөвгүүн" },
   { val: "girl", label: "👧 Охин" },
-  { val: "any", label: "🧒 Хамаагүй" },
 ];
 
 type ProviderProduct = {
@@ -50,7 +49,7 @@ const typeLabel: Record<string, string> = { physical: "Бэлэг", course: "К�
 
 export default function Home() {
   const [age, setAge] = useState(8);
-  const [gender, setGender] = useState("any");
+  const [gender, setGender] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
   const [customInterest, setCustomInterest] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
@@ -79,6 +78,7 @@ export default function Home() {
 
   const handleSubmit = async () => {
     setError("");
+    if (!gender) return setError("Хүйс сонгоно уу.");
     if (!interests.length) return setError("Дор хаяж нэг сонирхол сонгоно уу.");
     if (!skills.length) return setError("Дор хаяж нэг чадвар сонгоно уу.");
     setLoading(true);
@@ -106,7 +106,7 @@ export default function Home() {
     setExplanation("");
     setInterests([]);
     setSkills([]);
-    setGender("any");
+    setGender("");
     setError("");
   };
 
@@ -242,7 +242,7 @@ export default function Home() {
           <div className="flex gap-3 mb-8">
             {GENDERS.map(({ val, label }) => (
               <button key={val} onClick={() => setGender(val)}
-                className={`flex-1 py-2.5 rounded-xl border-2 text-sm font-medium transition-all ${
+                className={`px-8 py-3 rounded-xl border-2 text-base font-semibold transition-all ${
                   gender === val
                     ? "bg-[#7C5CBF] border-[#7C5CBF] text-white shadow-sm"
                     : "border-[#C9B8E8] text-[#7C5CBF] hover:border-[#7C5CBF] hover:bg-[#EDE5F8]"
@@ -255,8 +255,13 @@ export default function Home() {
           <hr className="border-[#E4DDF4] mb-6" />
 
           {/* Сонирхол */}
-          <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">
-            Сонирхол <span className="text-[#7C5CBF]">(хамгийн ихдээ 5)</span>
+          <div className="mb-1">
+            <div className="text-xs uppercase tracking-wider text-[#9B8EAA]">
+              Сонирхол <span className="text-[#7C5CBF]">(хамгийн ихдээ 5)</span>
+            </div>
+            <p className="text-xs text-[#B8ADCC] mt-1 mb-3">
+              Доорх санал болгох сонирхлуудаас сонгох, эсвэл өөрийн сонирхлоо нэмнэ үү
+            </p>
           </div>
           <div className="flex flex-wrap gap-2 mb-3">
             {INTERESTS.map(({ val, label }) => (
