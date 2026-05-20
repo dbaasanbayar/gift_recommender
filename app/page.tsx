@@ -2,15 +2,11 @@
 import { useState } from "react";
 
 const INTERESTS = [
-  { val: "art", label: "🎨 Урлаг" },
+  { val: "art", label: "🎨 Зураг" },
   { val: "music", label: "🎵 Хөгжим" },
-  { val: "engineering", label: "⚙️ Инженерчлэл" },
   { val: "technology", label: "💻 Технологи" },
   { val: "science", label: "🔬 Шинжлэх ухаан" },
-  { val: "reading", label: "📚 Уншлага" },
   { val: "cooking", label: "🍳 Хоол хийх" },
-  { val: "strategy", label: "♟️ Стратеги" },
-  { val: "building", label: "🏗️ Бүтээх" },
 ];
 
 const SKILLS = [
@@ -59,14 +55,16 @@ export default function Home() {
   const [explanation, setExplanation] = useState("");
   const [error, setError] = useState("");
 
+  const MAX_INTERESTS = 2;
+
   const toggleInterest = (val: string) => {
     if (interests.includes(val)) setInterests(interests.filter(v => v !== val));
-    else if (interests.length < 5) setInterests([...interests, val]);
+    else if (interests.length < MAX_INTERESTS) setInterests([...interests, val]);
   };
 
   const addCustomInterest = () => {
     const trimmed = customInterest.trim();
-    if (!trimmed || interests.includes(trimmed) || interests.length >= 5) return;
+    if (!trimmed || interests.includes(trimmed) || interests.length >= MAX_INTERESTS) return;
     setInterests([...interests, trimmed]);
     setCustomInterest("");
   };
@@ -111,7 +109,7 @@ export default function Home() {
   };
 
   if (loading) return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <main className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="text-center">
         <div className="flex gap-2 justify-center mb-4">
           {[0, 1, 2].map(i => (
@@ -126,7 +124,7 @@ export default function Home() {
   );
 
   if (providerProducts) return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
+    <main className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <h2 className="text-3xl font-light mb-4" style={{ fontFamily: "Georgia, serif" }}>
           Санал болгох бэлгүүд
@@ -176,7 +174,7 @@ export default function Home() {
               <span className="text-xs uppercase tracking-wider text-[#9B8EAA]">🛒 Олон улсын бэлгүүд</span>
             </div>
             <div className="space-y-3">
-              {googleProducts.slice(0, 5).map((p, i) => (
+              {googleProducts.slice(0, 3).map((p, i) => (
                 <div key={i} className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-2xl p-5 flex gap-4 hover:border-[#9B7FCC] transition-all">
                   <div className="w-12 h-12 rounded-xl shrink-0 bg-[#EDE5F8] overflow-hidden flex items-center justify-center text-xl">
                     {p.thumbnail ? <img src={p.thumbnail} alt={p.title} className="w-full h-full object-cover" /> : "🛒"}
@@ -208,7 +206,7 @@ export default function Home() {
   );
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
+    <main className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="mb-10">
           <span className="text-xs uppercase tracking-widest text-[#7C5CBF] border border-[#7C5CBF] px-3 py-1 rounded-full">
@@ -256,25 +254,37 @@ export default function Home() {
 
           {/* Сонирхол */}
           <div className="mb-1">
-            <div className="text-xs uppercase tracking-wider text-[#9B8EAA]">
-              Сонирхол <span className="text-[#7C5CBF]">(хамгийн ихдээ 5)</span>
+            <div className="flex items-center justify-between">
+              <div className="text-xs uppercase tracking-wider text-[#9B8EAA]">Сонирхол</div>
+              <div className={`text-xs font-semibold transition-all ${
+                interests.length === MAX_INTERESTS ? "text-[#7C5CBF]" : "text-[#B8ADCC]"
+              }`}>
+                {interests.length}/{MAX_INTERESTS}
+                {interests.length === MAX_INTERESTS && " · дүүрсэн 🔒"}
+              </div>
             </div>
             <p className="text-xs text-[#B8ADCC] mt-1 mb-3">
-              Доорх санал болгох сонирхлуудаас сонгох, эсвэл өөрийн сонирхлоо нэмнэ үү
+              Хамгийн чухал 2-ыг сонгоно уу — хайлтын нарийвчлал сайжирна
             </p>
           </div>
           <div className="flex flex-wrap gap-2 mb-3">
-            {INTERESTS.map(({ val, label }) => (
-              <button key={val} onClick={() => toggleInterest(val)}
-                className={`px-4 py-2 rounded-full border-2 text-sm font-medium transition-all ${
-                  interests.includes(val)
-                    ? "bg-[#7C5CBF] border-[#7C5CBF] text-white shadow-sm"
-                    : "border-[#C9B8E8] text-[#7C5CBF] hover:border-[#7C5CBF] hover:bg-[#EDE5F8]"
-                }`}>
-                {label}
-              </button>
-            ))}
-            {/* Хэрэглэгчийн нэмсэн custom interests */}
+            {INTERESTS.map(({ val, label }) => {
+              const selected = interests.includes(val);
+              const locked = !selected && interests.length >= MAX_INTERESTS;
+              return (
+                <button key={val} onClick={() => toggleInterest(val)} disabled={locked}
+                  className={`px-4 py-2 rounded-full border-2 text-sm font-medium transition-all ${
+                    selected
+                      ? "bg-[#7C5CBF] border-[#7C5CBF] text-white shadow-sm"
+                      : locked
+                        ? "border-[#E4DDF4] text-[#C9C0D8] cursor-not-allowed opacity-40"
+                        : "border-[#C9B8E8] text-[#7C5CBF] hover:border-[#7C5CBF] hover:bg-[#EDE5F8]"
+                  }`}>
+                  {label}
+                </button>
+              );
+            })}
+            {/* Custom нэмсэн сонирхлууд */}
             {interests.filter(i => !INTERESTS.find(x => x.val === i)).map(val => (
               <button key={val} onClick={() => toggleInterest(val)}
                 className="px-4 py-2 rounded-full border-2 bg-[#7C5CBF] border-[#7C5CBF] text-white text-sm font-medium shadow-sm flex items-center gap-1">
@@ -288,12 +298,13 @@ export default function Home() {
               value={customInterest}
               onChange={e => setCustomInterest(e.target.value)}
               onKeyDown={e => e.key === "Enter" && addCustomInterest()}
-              placeholder="Өөр сонирхол нэмэх..."
-              className="flex-1 border border-[#E4DDF4] rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#7C5CBF] transition-all bg-white"
+              disabled={interests.length >= MAX_INTERESTS}
+              placeholder={interests.length >= MAX_INTERESTS ? "2 сонирхол дүүрсэн 🔒" : "Өөр сонирхол нэмэх..."}
+              className="flex-1 border border-[#E4DDF4] rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#7C5CBF] transition-all bg-white disabled:bg-[#F8F6FC] disabled:text-[#C9C0D8] disabled:cursor-not-allowed"
             />
             <button onClick={addCustomInterest}
-              disabled={!customInterest.trim() || interests.length >= 5}
-              className="px-4 py-2 rounded-xl bg-[#EDE5F8] text-[#7C5CBF] text-sm font-semibold hover:bg-[#7C5CBF] hover:text-white transition-all disabled:opacity-40">
+              disabled={!customInterest.trim() || interests.length >= MAX_INTERESTS}
+              className="px-4 py-2 rounded-xl bg-[#EDE5F8] text-[#7C5CBF] text-sm font-semibold hover:bg-[#7C5CBF] hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed">
               + Нэмэх
             </button>
           </div>
@@ -302,7 +313,7 @@ export default function Home() {
 
           {/* Чадвар */}
           <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">
-            Хөгжүүлэх чадвар <span className="text-[#9B7FCC]">(нэг ба түүнээс дээш)</span>
+            Хөгжүүлэх чадвар <span className="text-[#9B7FCC]"></span>
           </div>
           <div className="flex flex-wrap gap-2 mb-2">
             {SKILLS.map(({ val, label }) => (

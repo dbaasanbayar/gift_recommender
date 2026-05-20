@@ -19,12 +19,12 @@ export async function searchGoogleShopping(
     engine: "google_shopping",
     q: query,
     api_key: process.env.SERPAPI_KEY,
-    num: 10,
+    num: 5,
   });
 
   const items = results.shopping_results ?? [];
 
-  return items.slice(0, 10).map((item: any) => ({
+  return items.slice(0, 5).map((item: any) => ({
     title: item.title,
     price: item.price ?? "Үнэ байхгүй",
     source: item.source ?? "",
