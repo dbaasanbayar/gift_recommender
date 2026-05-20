@@ -221,19 +221,6 @@ export default function Home() {
 
         <div className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-3xl p-8 shadow-sm">
 
-          {/* Нас */}
-          <div className="text-xs uppercase tracking-wider text-black font-semibold mb-3">Хүүхдийн нас</div>
-          <div className="flex items-center gap-6 mb-8">
-            <span className="text-5xl font-light text-black" style={{ fontFamily: "Georgia, serif" }}>
-              {age} <span className="text-base text-gray-500">нас</span>
-            </span>
-            <input type="range" min={3} max={16} value={age}
-              onChange={e => setAge(+e.target.value)}
-              className="flex-1 accent-[#7C5CBF]" />
-          </div>
-
-          <hr className="border-[#E4DDF4] mb-6" />
-
           {/* Хүйс */}
           <div className="text-xs uppercase tracking-wider text-black font-semibold mb-3">Хүйс</div>
           <div className="flex gap-3 mb-8">
@@ -251,6 +238,44 @@ export default function Home() {
 
           <hr className="border-[#E4DDF4] mb-6" />
 
+          {/* Нас + Avatar */}
+          <div className="text-xs uppercase tracking-wider text-black font-semibold mb-4">Хүүхдийн нас</div>
+
+          {/* Avatar */}
+          <div className="flex flex-col items-center mb-4">
+            <span
+              style={{
+                fontSize: `${Math.round(40 + (age - 3) * 3.5)}px`,
+                lineHeight: 1,
+                transition: "font-size 0.2s ease, transform 0.2s ease",
+                display: "inline-block",
+                transform: `scale(${0.85 + (age - 3) * 0.012})`,
+              }}
+            >
+              {age <= 5
+                ? "👶"
+                : age <= 9
+                  ? (gender === "girl" ? "👧" : gender === "boy" ? "👦" : "🧒")
+                  : age <= 13
+                    ? (gender === "girl" ? "👧" : gender === "boy" ? "👦" : "🧒")
+                    : (gender === "girl" ? "👩" : gender === "boy" ? "🧑" : "🧑")}
+            </span>
+            <span className="text-xs text-gray-400 mt-2">
+              {age <= 5 ? "Бага насны хүүхэд" : age <= 9 ? "Сургуулийн өмнөх нас" : age <= 12 ? "Бага сургуулийн нас" : "Дунд сургуулийн нас"}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4 mb-8">
+            <span className="text-4xl font-light text-black w-20 shrink-0" style={{ fontFamily: "Georgia, serif" }}>
+              {age} <span className="text-sm text-gray-500">нас</span>
+            </span>
+            <input type="range" min={3} max={16} value={age}
+              onChange={e => setAge(+e.target.value)}
+              className="flex-1 accent-[#7C5CBF]" />
+          </div>
+
+          <hr className="border-[#E4DDF4] mb-6" />
+
           {/* Сонирхол */}
           <div className="mb-1">
             <div className="flex items-center justify-between">
@@ -263,7 +288,7 @@ export default function Home() {
               </div>
             </div>
             <p className="text-xs text-gray-400 mt-1 mb-3">
-              Хамгийн чухал 2-ыг сонгоно уу — хайлтын нарийвчлал сайжирна
+              Ихдээ 2-ыг сонгоно уу — хайлтын нарийвчлал сайжирна
             </p>
           </div>
           <div className="flex flex-wrap gap-2 mb-3">
@@ -298,7 +323,7 @@ export default function Home() {
               onChange={e => setCustomInterest(e.target.value)}
               onKeyDown={e => e.key === "Enter" && addCustomInterest()}
               disabled={interests.length >= MAX_INTERESTS}
-              placeholder={interests.length >= MAX_INTERESTS ? "2 сонирхол дүүрсэн 🔒" : "Өөр сонирхол нэмэх..."}
+              placeholder={interests.length >= MAX_INTERESTS ? "2 сонирхол" : "Өөр сонирхол нэмэх..."}
               className="flex-1 border border-[#E4DDF4] rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#7C5CBF] transition-all bg-white disabled:bg-[#F8F6FC] disabled:text-[#C9C0D8] disabled:cursor-not-allowed"
             />
             <button onClick={addCustomInterest}
@@ -333,7 +358,7 @@ export default function Home() {
           )}
 
           <button onClick={handleSubmit}
-            className="w-full mt-8 py-4 bg-[#B8A5E0] text-white rounded-xl text-lg font-semibold hover:bg-[#A594D4] transition-all hover:-translate-y-0.5 hover:shadow-md tracking-wide"
+            className="w-full mt-8 py-4 bg-[#7C5CBF] text-white rounded-xl text-lg font-semibold hover:bg-[#A594D4] transition-all hover:-translate-y-0.5 hover:shadow-md tracking-wide"
             style={{ fontFamily: "Georgia, serif" }}>
             Бэлэг хайх →
           </button>
