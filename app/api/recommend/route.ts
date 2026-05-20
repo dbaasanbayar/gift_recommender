@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { products } from "@/db/schema";
+import { products, providers } from "@/db/schema";
 import { getEmbedding } from "@/lib/embeddings";
 import { searchGoogleShopping } from "@/lib/shopping";
 import { sql, and, eq } from "drizzle-orm";
@@ -25,8 +25,17 @@ export async function POST(req: NextRequest) {
 
   // Vector search — provider бүтээгдэхүүн
   const providerProducts = await db
-    .select()
+    .select({
+      id: products.id,
+      name: products.name,
+      type: products.type,
+      description: products.description,
+      price: products.price,
+      providerName: providers.businessName,
+      providerEmail: providers.email,
+    })
     .from(products)
+    .leftJoin(providers, eq(products.providerId, providers.id))
     .where(
       and(
         sql`${products.ageMin} <= ${age} AND ${products.ageMax} >= ${age}`,

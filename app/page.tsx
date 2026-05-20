@@ -30,6 +30,8 @@ type ProviderProduct = {
   type: string;
   description: string;
   price: number;
+  providerName: string | null;
+  providerEmail: string | null;
 };
 
 type GoogleProduct = {
@@ -99,7 +101,8 @@ export default function Home() {
               style={{ animationDelay: `${i * 0.2}s` }} />
           ))}
         </div>
-        <p className="text-[#9B8EAA] italic">Хамгийн тохиромжтой бэлгийг хайж байна...</p>
+        <p className="text-[#2D1F45] font-medium mb-1">Хамгийн тохиромжтой бэлгийг хайж байна...</p>
+        <p className="text-[#9B8EAA] text-xs">Монгол болон олон улсын бэлгүүдийг нэгэн зэрэг хайж байна. 5-10 секунд болно.</p>
       </div>
     </main>
   );
@@ -117,11 +120,15 @@ export default function Home() {
         </div>
 
         {/* Монгол providers */}
-        {providerProducts.length > 0 && (
-          <section className="mb-8">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-xs uppercase tracking-wider text-[#9B8EAA]">🏪 Монгол бэлгүүд</span>
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xs uppercase tracking-wider text-[#9B8EAA]">🏪 Монгол бэлгүүд</span>
+          </div>
+          {providerProducts.length === 0 ? (
+            <div className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-2xl p-6 text-center text-sm text-[#9B8EAA]">
+              Таны хайлтад тохирох монгол бэлэг олдсонгүй.
             </div>
+          ) : (
             <div className="space-y-3">
               {providerProducts.map((p) => (
                 <div key={p.id} className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-2xl p-5 flex gap-4 hover:border-[#7C5CBF] transition-all">
@@ -132,6 +139,9 @@ export default function Home() {
                     <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-1">{typeLabel[p.type]}</div>
                     <div className="text-lg font-medium text-[#2D1F45]" style={{ fontFamily: "Georgia, serif" }}>{p.name}</div>
                     <div className="text-sm text-[#9B8EAA]">{p.description}</div>
+                    {p.providerName && (
+                      <div className="text-xs text-[#7C5CBF] mt-2 font-medium">🏪 {p.providerName}</div>
+                    )}
                   </div>
                   <div className="text-xl text-[#7C5CBF] font-light whitespace-nowrap" style={{ fontFamily: "Georgia, serif" }}>
                     {p.price.toLocaleString()}₮
@@ -139,8 +149,8 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </section>
-        )}
+          )}
+        </section>
 
         {/* Google Shopping */}
         {googleProducts && googleProducts.length > 0 && (
