@@ -3,6 +3,8 @@ import { db } from "@/db";
 import { products, providers, providerMembers } from "@/db/schema";
 import { getEmbedding } from "@/lib/embeddings";
 
+// interests and skills MUST use same values as page.tsx INTERESTS/SKILLS
+// so product embeddings align with user query embeddings in RAG search
 const data = [
   {
     name:        "Lego Technic Set",
@@ -11,8 +13,8 @@ const data = [
     price:       85000,
     ageMin:      7,
     ageMax:      14,
-    interests:   ["engineering", "building", "science"],
-    skills:      ["problem_solving", "creativity", "focus"],
+    interests:   ["technology", "science"],
+    skills:      ["logic"],
   },
   {
     name:        "Уран зургийн иж бүрдэл",
@@ -21,8 +23,8 @@ const data = [
     price:       45000,
     ageMin:      5,
     ageMax:      15,
-    interests:   ["art", "drawing", "creativity"],
-    skills:      ["creativity", "patience", "expression"],
+    interests:   ["art"],
+    skills:      ["creative"],
   },
   {
     name:        "Хүүхдийн кодинг курс",
@@ -31,8 +33,8 @@ const data = [
     price:       120000,
     ageMin:      8,
     ageMax:      14,
-    interests:   ["technology", "gaming", "science"],
-    skills:      ["problem_solving", "logic", "creativity"],
+    interests:   ["technology", "science"],
+    skills:      ["logic"],
   },
   {
     name:        "Хөгжмийн хичээл — гитар",
@@ -41,8 +43,8 @@ const data = [
     price:       150000,
     ageMin:      7,
     ageMax:      16,
-    interests:   ["music", "art", "performance"],
-    skills:      ["patience", "creativity", "discipline"],
+    interests:   ["music", "art"],
+    skills:      ["patience"],
   },
   {
     name:        "Робот угсрах workshop",
@@ -51,8 +53,8 @@ const data = [
     price:       65000,
     ageMin:      9,
     ageMax:      15,
-    interests:   ["engineering", "technology", "science"],
-    skills:      ["problem_solving", "teamwork", "logic"],
+    interests:   ["technology", "science"],
+    skills:      ["teamwork"],
   },
   {
     name:        "Хоол хийх хүүхдийн курс",
@@ -61,8 +63,8 @@ const data = [
     price:       55000,
     ageMin:      6,
     ageMax:      14,
-    interests:   ["cooking", "creativity", "science"],
-    skills:      ["patience", "creativity", "focus"],
+    interests:   ["cooking"],
+    skills:      ["patience"],
   },
   {
     name:        "Шатарны иж бүрдэл + курс",
@@ -71,8 +73,8 @@ const data = [
     price:       75000,
     ageMin:      6,
     ageMax:      16,
-    interests:   ["strategy", "games", "science"],
-    skills:      ["logic", "focus", "patience"],
+    interests:   ["science"],
+    skills:      ["logic"],
   },
   {
     name:        "Уншлагын иж бүрдэл",
@@ -81,8 +83,8 @@ const data = [
     price:       60000,
     ageMin:      7,
     ageMax:      15,
-    interests:   ["reading", "learning", "creativity"],
-    skills:      ["focus", "imagination", "language"],
+    interests:   ["art", "science"],
+    skills:      ["focus"],
   },
   {
     name:        "Хүүхдийн зураг авалтын курс",
@@ -91,8 +93,8 @@ const data = [
     price:       90000,
     ageMin:      10,
     ageMax:      16,
-    interests:   ["art", "technology", "creativity"],
-    skills:      ["creativity", "patience", "expression"],
+    interests:   ["art", "technology"],
+    skills:      ["creative"],
   },
   {
     name:        "Дүрслэх урлагийн workshop",
@@ -101,8 +103,18 @@ const data = [
     price:       70000,
     ageMin:      6,
     ageMax:      14,
-    interests:   ["art", "building", "creativity"],
-    skills:      ["creativity", "patience", "expression"],
+    interests:   ["art"],
+    skills:      ["creative"],
+  },
+  {
+    name:        "Боксын сургалт",
+    type:        "physical",
+    description: "1 сарын боксын сургалт",
+    price:       100000,
+    ageMin:      3,
+    ageMax:      16,
+    interests:   ["sport"],
+    skills:      ["patience"],
   },
 ];
 
@@ -136,11 +148,13 @@ async function main() {
   await db.delete(products);
 
   for (const item of data) {
+    // Format mirrors user query in /api/recommend for aligned vector space
     const embeddingText = `
+      ${item.ageMin}-${item.ageMax} настай хүүхэд.
+      Сонирхол: ${item.interests.join(", ")}.
+      Хөгжүүлэх чадвар: ${item.skills.join(", ")}.
       ${item.name}. ${item.description}.
-      Interests: ${item.interests.join(", ")}.
-      Skills: ${item.skills.join(", ")}.
-    `;
+    `.trim();
     const embedding = await getEmbedding(embeddingText);
 
     await db.insert(products).values({
