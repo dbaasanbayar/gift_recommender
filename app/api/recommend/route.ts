@@ -24,8 +24,14 @@ export async function POST(req: NextRequest) {
     searchGoogleShopping(age, interests, skills).catch(() => []),
   ]);
 
-  // Vector search — provider бүтээгдэхүүн
-  const providerProducts = await db
+  // Vector search — interest overlap pre-filter + vector ranking
+  // Pre-filter by interest overlap first so skill-only matches (e.g. guitar
+  // matching "patience" even when user searched "sport") don't pollute results.
+  // Fall back to no interest filter if nothing matches (graceful degradation).
+  const interestFilter = sql`${products.interests} && ARRAY[${sql.join(interests.map((i: string) => sql`${i}`), sql`, `)}]::text[]`;
+  const skillFilter    = sql`${products.skills}    && ARRAY[${sql.join(skills.map((s: string)    => sql`${s}`), sql`, `)}]::text[]`;
+
+  let providerProducts = await db
     .select({
       id: products.id,
       name: products.name,
@@ -40,11 +46,38 @@ export async function POST(req: NextRequest) {
     .where(
       and(
         sql`${products.ageMin} <= ${age} AND ${products.ageMax} >= ${age}`,
-        eq(products.approved, 1)
+        eq(products.approved, 1),
+        interestFilter,
+        skillFilter,
       )
     )
     .orderBy(sql`embedding <=> ${JSON.stringify(queryEmbedding)}::vector`)
     .limit(3);
+
+  // Graceful fallback: if strict match returns nothing, try interest-only
+  if (providerProducts.length === 0) {
+    providerProducts = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        type: products.type,
+        description: products.description,
+        price: products.price,
+        providerName: providers.businessName,
+        providerEmail: providers.email,
+      })
+      .from(products)
+      .leftJoin(providers, eq(products.providerId, providers.id))
+      .where(
+        and(
+          sql`${products.ageMin} <= ${age} AND ${products.ageMax} >= ${age}`,
+          eq(products.approved, 1),
+          interestFilter,
+        )
+      )
+      .orderBy(sql`embedding <=> ${JSON.stringify(queryEmbedding)}::vector`)
+      .limit(3);
+  }
 
   // Groq — хоёр эх үүсвэрийг нэгтгэж тайлбарлана
   const chat = await groq.chat.completions.create({
