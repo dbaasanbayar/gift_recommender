@@ -117,8 +117,8 @@ export default function Home() {
               style={{ animationDelay: `${i * 0.2}s` }} />
           ))}
         </div>
-        <p className="text-[#2D1F45] font-medium mb-1">Хамгийн тохиромжтой бэлгийг хайж байна...</p>
-        <p className="text-[#9B8EAA] text-xs">Монгол болон олон улсын бэлгүүдийг нэгэн зэрэг хайж байна. 5-10 секунд болно.</p>
+        <p className="text-black font-medium mb-1">Хамгийн тохиромжтой бэлгийг хайж байна...</p>
+        <p className="text-gray-500 text-xs">Монгол болон олон улсын бэлгүүдийг нэгэн зэрэг хайж байна. 5-10 секунд болно.</p>
       </div>
     </main>
   );
@@ -151,9 +151,9 @@ export default function Home() {
                     {typeIcon[p.type]}
                   </div>
                   <div className="flex-1">
-                    <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-1">{typeLabel[p.type]}</div>
-                    <div className="text-lg font-medium text-[#2D1F45]" style={{ fontFamily: "Georgia, serif" }}>{p.name}</div>
-                    <div className="text-sm text-[#9B8EAA]">{p.description}</div>
+                    <div className="text-xs uppercase tracking-wider text-gray-500 mb-1">{typeLabel[p.type]}</div>
+                    <div className="text-lg font-medium text-black" style={{ fontFamily: "Georgia, serif" }}>{p.name}</div>
+                    <div className="text-sm text-gray-600">{p.description}</div>
                     {p.providerName && (
                       <div className="text-xs text-[#7C5CBF] mt-2 font-medium">🏪 {p.providerName}</div>
                     )}
@@ -180,8 +180,8 @@ export default function Home() {
                     {p.thumbnail ? <img src={p.thumbnail} alt={p.title} className="w-full h-full object-cover" /> : "🛒"}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-1">{p.source}</div>
-                    <div className="text-base font-medium text-[#2D1F45] line-clamp-2" style={{ fontFamily: "Georgia, serif" }}>{p.title}</div>
+                    <div className="text-xs uppercase tracking-wider text-gray-500 mb-1">{p.source}</div>
+                    <div className="text-base font-medium text-black line-clamp-2" style={{ fontFamily: "Georgia, serif" }}>{p.title}</div>
                     <div className="text-lg text-[#9B7FCC] font-light mt-1" style={{ fontFamily: "Georgia, serif" }}>{p.price}</div>
                   </div>
                   {p.link && (
@@ -215,7 +215,7 @@ export default function Home() {
           <h1 className="text-5xl font-light mt-4 mb-3 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
             Утга бүхий <em className="text-[#7C5CBF]">бэлэг олъё</em>
           </h1>
-          <p className="text-[#9B8EAA] text-sm leading-relaxed">
+          <p className="text-gray-600 text-sm leading-relaxed">
             Хүүхдийн нас, сонирхол, хөгжүүлэх чадварт тулгуурлан хамгийн тохиромжтой бэлгийг санал болгоно.
           </p>
         </div>
@@ -223,10 +223,10 @@ export default function Home() {
         <div className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-3xl p-8 shadow-sm">
 
           {/* Нас */}
-          <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">Хүүхдийн нас</div>
+          <div className="text-xs uppercase tracking-wider text-black font-semibold mb-3">Хүүхдийн нас</div>
           <div className="flex items-center gap-6 mb-8">
-            <span className="text-5xl font-light text-[#2D1F45]" style={{ fontFamily: "Georgia, serif" }}>
-              {age} <span className="text-base text-[#9B8EAA]">нас</span>
+            <span className="text-5xl font-light text-black" style={{ fontFamily: "Georgia, serif" }}>
+              {age} <span className="text-base text-gray-500">нас</span>
             </span>
             <input type="range" min={3} max={16} value={age}
               onChange={e => setAge(+e.target.value)}
@@ -236,7 +236,7 @@ export default function Home() {
           <hr className="border-[#E4DDF4] mb-6" />
 
           {/* Хүйс */}
-          <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">Хүйс</div>
+          <div className="text-xs uppercase tracking-wider text-black font-semibold mb-3">Хүйс</div>
           <div className="flex gap-3 mb-8">
             {GENDERS.map(({ val, label }) => (
               <button key={val} onClick={() => setGender(val)}
@@ -255,15 +255,15 @@ export default function Home() {
           {/* Сонирхол */}
           <div className="mb-1">
             <div className="flex items-center justify-between">
-              <div className="text-xs uppercase tracking-wider text-[#9B8EAA]">Сонирхол</div>
+              <div className="text-xs uppercase tracking-wider text-black font-semibold">Сонирхол</div>
               <div className={`text-xs font-semibold transition-all ${
-                interests.length === MAX_INTERESTS ? "text-[#7C5CBF]" : "text-[#B8ADCC]"
+                interests.length === MAX_INTERESTS ? "text-[#7C5CBF]" : "text-gray-400"
               }`}>
                 {interests.length}/{MAX_INTERESTS}
                 {interests.length === MAX_INTERESTS && " · дүүрсэн 🔒"}
               </div>
             </div>
-            <p className="text-xs text-[#B8ADCC] mt-1 mb-3">
+            <p className="text-xs text-gray-400 mt-1 mb-3">
               Хамгийн чухал 2-ыг сонгоно уу — хайлтын нарийвчлал сайжирна
             </p>
           </div>
@@ -312,8 +312,8 @@ export default function Home() {
           <hr className="border-[#E4DDF4] mb-6" />
 
           {/* Чадвар */}
-          <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">
-            Хөгжүүлэх чадвар <span className="text-[#9B7FCC]"></span>
+          <div className="text-xs uppercase tracking-wider text-black font-semibold mb-3">
+            Хөгжүүлэх чадвар
           </div>
           <div className="flex flex-wrap gap-2 mb-2">
             {SKILLS.map(({ val, label }) => (
@@ -335,7 +335,7 @@ export default function Home() {
           )}
 
           <button onClick={handleSubmit}
-            className="w-full mt-8 py-4 bg-[#7C5CBF] text-white rounded-xl text-lg font-semibold hover:bg-[#6B4AAF] transition-all hover:-translate-y-0.5 hover:shadow-lg tracking-wide"
+            className="w-full mt-8 py-4 bg-[#B8A5E0] text-white rounded-xl text-lg font-semibold hover:bg-[#A594D4] transition-all hover:-translate-y-0.5 hover:shadow-md tracking-wide"
             style={{ fontFamily: "Georgia, serif" }}>
             Бэлэг хайх →
           </button>
