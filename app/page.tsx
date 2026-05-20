@@ -14,14 +14,17 @@ const INTERESTS = [
 ];
 
 const SKILLS = [
-  { val: "creativity", label: "✨ Бүтээлч байдал" },
-  { val: "problem_solving", label: "🧩 Асуудал шийдэх" },
+  { val: "creative", label: "🎨 Бүтээлч байдал" },
+  { val: "logic", label: "🧠 Логик сэтгэлгээ" },
   { val: "focus", label: "🎯 Төвлөрөл" },
-  { val: "patience", label: "🌱 Тэвчээр" },
-  { val: "logic", label: "🔢 Логик" },
   { val: "teamwork", label: "🤝 Хамтын ажиллагаа" },
-  { val: "discipline", label: "💪 Хариуцлага" },
-  { val: "expression", label: "🗣️ Илэрхийлэл" },
+  { val: "patience", label: "🌱 Тэвчээр" },
+];
+
+const GENDERS = [
+  { val: "boy", label: "👦 Хөвгүүн" },
+  { val: "girl", label: "👧 Охин" },
+  { val: "any", label: "🧒 Хамаагүй" },
 ];
 
 type ProviderProduct = {
@@ -47,7 +50,9 @@ const typeLabel: Record<string, string> = { physical: "Бэлэг", course: "К�
 
 export default function Home() {
   const [age, setAge] = useState(8);
+  const [gender, setGender] = useState("any");
   const [interests, setInterests] = useState<string[]>([]);
+  const [customInterest, setCustomInterest] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [providerProducts, setProviderProducts] = useState<ProviderProduct[] | null>(null);
@@ -55,9 +60,21 @@ export default function Home() {
   const [explanation, setExplanation] = useState("");
   const [error, setError] = useState("");
 
-  const toggleChip = (val: string, list: string[], setList: (v: string[]) => void) => {
-    if (list.includes(val)) setList(list.filter(v => v !== val));
-    else if (list.length < 3) setList([...list, val]);
+  const toggleInterest = (val: string) => {
+    if (interests.includes(val)) setInterests(interests.filter(v => v !== val));
+    else if (interests.length < 5) setInterests([...interests, val]);
+  };
+
+  const addCustomInterest = () => {
+    const trimmed = customInterest.trim();
+    if (!trimmed || interests.includes(trimmed) || interests.length >= 5) return;
+    setInterests([...interests, trimmed]);
+    setCustomInterest("");
+  };
+
+  const toggleSkill = (val: string) => {
+    if (skills.includes(val)) setSkills(skills.filter(v => v !== val));
+    else setSkills([...skills, val]);
   };
 
   const handleSubmit = async () => {
@@ -70,7 +87,7 @@ export default function Home() {
       const res = await fetch("/api/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ age, interests, skills }),
+        body: JSON.stringify({ age, gender, interests, skills }),
       });
       const data = await res.json();
       setProviderProducts(data.providerProducts);
@@ -89,11 +106,12 @@ export default function Home() {
     setExplanation("");
     setInterests([]);
     setSkills([]);
+    setGender("any");
     setError("");
   };
 
   if (loading) return (
-    <main className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 via-purple-50 to-pink-50">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="text-center">
         <div className="flex gap-2 justify-center mb-4">
           {[0, 1, 2].map(i => (
@@ -108,13 +126,12 @@ export default function Home() {
   );
 
   if (providerProducts) return (
-    <main className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <h2 className="text-3xl font-light mb-4" style={{ fontFamily: "Georgia, serif" }}>
           Санал болгох бэлгүүд
         </h2>
 
-        {/* AI тайлбар */}
         <div className="bg-[#F5F0FF] border-l-4 border-[#7C5CBF] p-4 rounded-r-xl mb-8 text-sm leading-relaxed text-[#2D1F45]">
           {explanation}
         </div>
@@ -162,9 +179,7 @@ export default function Home() {
               {googleProducts.slice(0, 5).map((p, i) => (
                 <div key={i} className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-2xl p-5 flex gap-4 hover:border-[#9B7FCC] transition-all">
                   <div className="w-12 h-12 rounded-xl shrink-0 bg-[#EDE5F8] overflow-hidden flex items-center justify-center text-xl">
-                    {p.thumbnail
-                      ? <img src={p.thumbnail} alt={p.title} className="w-full h-full object-cover" />
-                      : "🛒"}
+                    {p.thumbnail ? <img src={p.thumbnail} alt={p.title} className="w-full h-full object-cover" /> : "🛒"}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-1">{p.source}</div>
@@ -193,7 +208,7 @@ export default function Home() {
   );
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="mb-10">
           <span className="text-xs uppercase tracking-widest text-[#7C5CBF] border border-[#7C5CBF] px-3 py-1 rounded-full">
@@ -208,6 +223,8 @@ export default function Home() {
         </div>
 
         <div className="bg-[#FDFCFF] border border-[#E4DDF4] rounded-3xl p-8 shadow-sm">
+
+          {/* Нас */}
           <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">Хүүхдийн нас</div>
           <div className="flex items-center gap-6 mb-8">
             <span className="text-5xl font-light text-[#2D1F45]" style={{ fontFamily: "Georgia, serif" }}>
@@ -220,14 +237,13 @@ export default function Home() {
 
           <hr className="border-[#E4DDF4] mb-6" />
 
-          <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">
-            Сонирхол <span className="text-[#7C5CBF]">(1-3 сонго)</span>
-          </div>
-          <div className="flex flex-wrap gap-2 mb-6">
-            {INTERESTS.map(({ val, label }) => (
-              <button key={val} onClick={() => toggleChip(val, interests, setInterests)}
-                className={`px-4 py-2 rounded-full border-2 text-sm font-medium transition-all ${
-                  interests.includes(val)
+          {/* Хүйс */}
+          <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">Хүйс</div>
+          <div className="flex gap-3 mb-8">
+            {GENDERS.map(({ val, label }) => (
+              <button key={val} onClick={() => setGender(val)}
+                className={`flex-1 py-2.5 rounded-xl border-2 text-sm font-medium transition-all ${
+                  gender === val
                     ? "bg-[#7C5CBF] border-[#7C5CBF] text-white shadow-sm"
                     : "border-[#C9B8E8] text-[#7C5CBF] hover:border-[#7C5CBF] hover:bg-[#EDE5F8]"
                 }`}>
@@ -238,12 +254,54 @@ export default function Home() {
 
           <hr className="border-[#E4DDF4] mb-6" />
 
+          {/* Сонирхол */}
           <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">
-            Хөгжүүлэх чадвар <span className="text-[#9B7FCC]">(1-3 сонго)</span>
+            Сонирхол <span className="text-[#7C5CBF]">(хамгийн ихдээ 5)</span>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {INTERESTS.map(({ val, label }) => (
+              <button key={val} onClick={() => toggleInterest(val)}
+                className={`px-4 py-2 rounded-full border-2 text-sm font-medium transition-all ${
+                  interests.includes(val)
+                    ? "bg-[#7C5CBF] border-[#7C5CBF] text-white shadow-sm"
+                    : "border-[#C9B8E8] text-[#7C5CBF] hover:border-[#7C5CBF] hover:bg-[#EDE5F8]"
+                }`}>
+                {label}
+              </button>
+            ))}
+            {/* Хэрэглэгчийн нэмсэн custom interests */}
+            {interests.filter(i => !INTERESTS.find(x => x.val === i)).map(val => (
+              <button key={val} onClick={() => toggleInterest(val)}
+                className="px-4 py-2 rounded-full border-2 bg-[#7C5CBF] border-[#7C5CBF] text-white text-sm font-medium shadow-sm flex items-center gap-1">
+                {val} <span className="text-white/70 text-xs">✕</span>
+              </button>
+            ))}
+          </div>
+          {/* Custom сонирхол нэмэх */}
+          <div className="flex gap-2 mb-6">
+            <input
+              value={customInterest}
+              onChange={e => setCustomInterest(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && addCustomInterest()}
+              placeholder="Өөр сонирхол нэмэх..."
+              className="flex-1 border border-[#E4DDF4] rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#7C5CBF] transition-all bg-white"
+            />
+            <button onClick={addCustomInterest}
+              disabled={!customInterest.trim() || interests.length >= 5}
+              className="px-4 py-2 rounded-xl bg-[#EDE5F8] text-[#7C5CBF] text-sm font-semibold hover:bg-[#7C5CBF] hover:text-white transition-all disabled:opacity-40">
+              + Нэмэх
+            </button>
+          </div>
+
+          <hr className="border-[#E4DDF4] mb-6" />
+
+          {/* Чадвар */}
+          <div className="text-xs uppercase tracking-wider text-[#9B8EAA] mb-3">
+            Хөгжүүлэх чадвар <span className="text-[#9B7FCC]">(нэг ба түүнээс дээш)</span>
           </div>
           <div className="flex flex-wrap gap-2 mb-2">
             {SKILLS.map(({ val, label }) => (
-              <button key={val} onClick={() => toggleChip(val, skills, setSkills)}
+              <button key={val} onClick={() => toggleSkill(val)}
                 className={`px-4 py-2 rounded-full border-2 text-sm font-medium transition-all ${
                   skills.includes(val)
                     ? "bg-[#9B7FCC] border-[#9B7FCC] text-white shadow-sm"

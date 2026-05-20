@@ -9,10 +9,11 @@ import Groq from "groq-sdk";
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function POST(req: NextRequest) {
-  const { age, interests, skills } = await req.json();
+  const { age, interests, skills, gender } = await req.json();
 
+  const genderText = gender === "boy" ? "хөвгүүн" : gender === "girl" ? "охин" : "";
   const queryText = `
-    ${age} настай хүүхэд.
+    ${age} настай ${genderText} хүүхэд.
     Сонирхол: ${interests.join(", ")}.
     Хөгжүүлэх чадвар: ${skills.join(", ")}.
   `;
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
       {
         role: "user",
         content: `
-          Хүүхэд: ${age} нас
+          Хүүхэд: ${age} нас${genderText ? `, ${genderText}` : ""}
           Сонирхол: ${interests.join(", ")}
           Хөгжүүлэх чадвар: ${skills.join(", ")}
 

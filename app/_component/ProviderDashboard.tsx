@@ -3,13 +3,13 @@
 import { useState } from "react";
 
 const INTEREST_OPTIONS = [
-  "art", "music", "engineering", "technology",
-  "science", "reading", "cooking", "strategy", "building"
+  "painting", "music", "engineering", "technology",
+  "science", "reading", "cooking", "building", "mobility", "performing art"
 ];
 
 const SKILL_OPTIONS = [
   "creativity", "problem_solving", "focus",
-  "patience", "logic", "teamwork", "discipline", "expression"
+  "patience", "logic", "teamwork", "discipline", "expression",
 ];
 
 export default function ProviderDashboard({ userName }: {
@@ -73,7 +73,7 @@ export default function ProviderDashboard({ userName }: {
 
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
+        <main className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <span className="text-xs uppercase tracking-widest text-[#7C5CBF] border border-[#7C5CBF] px-3 py-1 rounded-full">

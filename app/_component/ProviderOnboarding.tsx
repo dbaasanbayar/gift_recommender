@@ -41,7 +41,7 @@ export default function ProviderOnboarding({
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
+    <main className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-lg mx-auto">
         <div className="mb-8">
           <span className="text-xs uppercase tracking-widest text-[#7C5CBF] border-2 border-[#7C5CBF] px-3 py-1 rounded-full font-medium">
