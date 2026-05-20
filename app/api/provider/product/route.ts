@@ -31,7 +31,13 @@ export async function POST(req: NextRequest) {
 
   const { name, type, description, price, ageMin, ageMax, interests, skills } = await req.json();
 
-  const embeddingText = `${name}. ${description}. Interests: ${interests.join(", ")}. Skills: ${skills.join(", ")}.`;
+  // Format mirrors the user query in /api/recommend so vectors live in the same semantic space
+  const embeddingText = `
+    ${ageMin}-${ageMax} настай хүүхэд.
+    Сонирхол: ${interests.join(", ")}.
+    Хөгжүүлэх чадвар: ${skills.join(", ")}.
+    ${name}. ${description}.
+  `.trim();
   const embedding = await getEmbedding(embeddingText);
 
   await db.insert(products).values({

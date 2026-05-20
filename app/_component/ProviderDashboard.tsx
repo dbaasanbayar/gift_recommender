@@ -2,14 +2,23 @@
 
 import { useState } from "react";
 
+// These values MUST match the user-facing form (page.tsx INTERESTS/SKILLS)
+// so that product embeddings align with query embeddings in RAG search
 const INTEREST_OPTIONS = [
-  "painting", "music", "engineering", "technology",
-  "science", "reading", "cooking", "building", "mobility", "performing art"
+  { val: "art",        label: "🎨 Зураг / Урлаг" },
+  { val: "music",      label: "🎵 Хөгжим" },
+  { val: "technology", label: "💻 Технологи" },
+  { val: "science",    label: "🔬 Шинжлэх ухаан" },
+  { val: "cooking",    label: "🍳 Хоол хийх" },
+  { val: "sport",      label: "⚽ Спорт" },
 ];
 
 const SKILL_OPTIONS = [
-  "creativity", "problem_solving", "focus",
-  "patience", "logic", "teamwork", "discipline", "expression",
+  { val: "creative",  label: "🎨 Бүтээлч байдал" },
+  { val: "logic",     label: "🧠 Логик сэтгэлгээ" },
+  { val: "focus",     label: "🎯 Төвлөрөл" },
+  { val: "teamwork",  label: "🤝 Хамтын ажиллагаа" },
+  { val: "patience",  label: "🌱 Тэвчээр" },
 ];
 
 export default function ProviderDashboard({ userName }: {
@@ -152,14 +161,14 @@ export default function ProviderDashboard({ userName }: {
           <div className="mb-4">
             <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">Сонирхол</label>
             <div className="flex flex-wrap gap-2">
-              {INTEREST_OPTIONS.map(val => (
+              {INTEREST_OPTIONS.map(({ val, label }) => (
                 <button key={val} onClick={() => toggleItem(val, form.interests, "interests")}
                   className={`px-3 py-1.5 rounded-full border text-xs transition-all ${
                     form.interests.includes(val)
                       ? "bg-[#7C5CBF] border-[#7C5CBF] text-white"
                       : "border-[#E4DDF4] text-[#9B8EAA]"
                   }`}>
-                  {val}
+                  {label}
                 </button>
               ))}
             </div>
@@ -169,14 +178,14 @@ export default function ProviderDashboard({ userName }: {
           <div className="mb-6">
             <label className="text-xs uppercase tracking-wider text-[#9B8EAA] block mb-2">Чадвар</label>
             <div className="flex flex-wrap gap-2">
-              {SKILL_OPTIONS.map(val => (
+              {SKILL_OPTIONS.map(({ val, label }) => (
                 <button key={val} onClick={() => toggleItem(val, form.skills, "skills")}
                   className={`px-3 py-1.5 rounded-full border text-xs transition-all ${
                     form.skills.includes(val)
                       ? "bg-[#9B7FCC] border-[#9B7FCC] text-white"
                       : "border-[#E4DDF4] text-[#9B8EAA]"
                   }`}>
-                  {val}
+                  {label}
                 </button>
               ))}
             </div>

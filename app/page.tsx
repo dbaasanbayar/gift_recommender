@@ -7,6 +7,7 @@ const INTERESTS = [
   { val: "technology", label: "💻 Технологи" },
   { val: "science", label: "🔬 Шинжлэх ухаан" },
   { val: "cooking", label: "🍳 Хоол хийх" },
+  { val: "sport", label: "⚽ Спорт" }
 ];
 
 const SKILLS = [
@@ -260,9 +261,9 @@ export default function Home() {
                     ? (gender === "girl" ? "👧" : gender === "boy" ? "👦" : "🧒")
                     : (gender === "girl" ? "👩" : gender === "boy" ? "🧑" : "🧑")}
             </span>
-            <span className="text-xs text-gray-400 mt-2">
+            {/* <span className="text-xs text-gray-400 mt-2">
               {age <= 5 ? "Бага насны хүүхэд" : age <= 9 ? "Сургуулийн өмнөх нас" : age <= 12 ? "Бага сургуулийн нас" : "Дунд сургуулийн нас"}
-            </span>
+            </span> */}
           </div>
 
           <div className="flex items-center gap-4 mb-8">
@@ -284,7 +285,7 @@ export default function Home() {
                 interests.length === MAX_INTERESTS ? "text-[#7C5CBF]" : "text-gray-400"
               }`}>
                 {interests.length}/{MAX_INTERESTS}
-                {interests.length === MAX_INTERESTS && " · дүүрсэн 🔒"}
+                {interests.length === MAX_INTERESTS}
               </div>
             </div>
             <p className="text-xs text-gray-400 mt-1 mb-3">
@@ -323,7 +324,7 @@ export default function Home() {
               onChange={e => setCustomInterest(e.target.value)}
               onKeyDown={e => e.key === "Enter" && addCustomInterest()}
               disabled={interests.length >= MAX_INTERESTS}
-              placeholder={interests.length >= MAX_INTERESTS ? "2 сонирхол" : "Өөр сонирхол нэмэх..."}
+              placeholder={interests.length >= MAX_INTERESTS ? "Ихдээ 2 сонирхол" : "Өөр сонирхол нэмэх..."}
               className="flex-1 border border-[#E4DDF4] rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#7C5CBF] transition-all bg-white disabled:bg-[#F8F6FC] disabled:text-[#C9C0D8] disabled:cursor-not-allowed"
             />
             <button onClick={addCustomInterest}
