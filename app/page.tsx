@@ -70,8 +70,7 @@ export default function Home() {
   };
 
   const toggleSkill = (val: string) => {
-    if (skills.includes(val)) setSkills(skills.filter(v => v !== val));
-    else setSkills([...skills, val]);
+    setSkills(skills.includes(val) ? [] : [val]);
   };
 
   const handleSubmit = async () => {
@@ -312,9 +311,8 @@ export default function Home() {
           <hr className="border-[#E4DDF4] mb-6" />
 
           {/* Чадвар */}
-          <div className="text-xs uppercase tracking-wider text-black font-semibold mb-3">
-            Хөгжүүлэх чадвар
-          </div>
+          <div className="text-xs uppercase tracking-wider text-black font-semibold mb-1">Хөгжүүлэх чадвар</div>
+          <p className="text-xs text-gray-400 mb-3">Нэг чадвар сонгоно уу</p>
           <div className="flex flex-wrap gap-2 mb-2">
             {SKILLS.map(({ val, label }) => (
               <button key={val} onClick={() => toggleSkill(val)}
